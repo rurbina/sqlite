@@ -10,8 +10,8 @@ SQLITE_EXTENSION_INIT1
 __declspec(dllexport)
 #endif
 
-void sqlite_ext_unique_id(sqlite3_context*,int,sqlite3_value**);
-void sqlite_ext_unique_id_destroy(void*);
+void sqlite_ext_uid(sqlite3_context*,int,sqlite3_value**);
+void sqlite_ext_uid_destroy(void*);
 
 /* TODO: Change the entry point name so that "extension" is replaced by
 ** text derived from the shared library filename as follows:  Copy every
@@ -19,7 +19,7 @@ void sqlite_ext_unique_id_destroy(void*);
 ** the next following ".", converting each character to lowercase, and
 ** discarding the first three characters if they are "lib".
 */
-int sqlite3_extension_init(sqlite3 *db, char **pzErrMsg, const sqlite3_api_routines *pApi )
+int sqlite3_uid_init(sqlite3 *db, char **pzErrMsg, const sqlite3_api_routines *pApi )
 {
   int rc = SQLITE_OK;
   SQLITE_EXTENSION_INIT2(pApi);
@@ -31,12 +31,12 @@ int sqlite3_extension_init(sqlite3 *db, char **pzErrMsg, const sqlite3_api_routi
   ** to register the new features that your extension adds.
   */
 
-  sqlite3_create_function_v2(db, "unique_id", 1, SQLITE_UTF8, NULL, sqlite_ext_unique_id, NULL, NULL, NULL );
-  sqlite3_create_function_v2(db, "unique_id", 0, SQLITE_UTF8, NULL, sqlite_ext_unique_id, NULL, NULL, NULL );
+  sqlite3_create_function_v2(db, "uid", 1, SQLITE_UTF8, NULL, sqlite_ext_uid, NULL, NULL, NULL );
+  sqlite3_create_function_v2(db, "uid", 0, SQLITE_UTF8, NULL, sqlite_ext_uid, NULL, NULL, NULL );
   return rc;
 }
 
-void sqlite_ext_unique_id(sqlite3_context *db, int row, sqlite3_value **value) {
+void sqlite_ext_uid(sqlite3_context *db, int row, sqlite3_value **value) {
 
   char *uid = malloc(256);
   char *chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -58,20 +58,20 @@ void sqlite_ext_unique_id(sqlite3_context *db, int row, sqlite3_value **value) {
   }
 
   for ( i=0; i < 254 && i < max_length; i++ ) {
-    rndm = random();
+    rndm = rand();
     uid[i] = chars[rndm % max];
   }
   uid[i] = 0;
 
   //  strcpy(uid, sqlite3_value_text(value[0]));
 
-  sqlite3_result_text(db, uid, strlen(uid), sqlite_ext_unique_id_destroy);
+  sqlite3_result_text(db, uid, strlen(uid), sqlite_ext_uid_destroy);
 
   return;
 
 }
 
-void sqlite_ext_unique_id_destroy(void *free_me) {
+void sqlite_ext_uid_destroy(void *free_me) {
 
   free(free_me);
 
