@@ -1,9 +1,16 @@
 all : SHARED_OBJECTS
+dll : uid.dll
+so  : uid.so
 
-SHARED_OBJECTS : unique_id.so
+SHARED_OBJECTS : uid.so uid.dll
 
-unique_id.so : unique_id.c
-	gcc -g -fPIC -I/usr/local/include -shared unique_id.c -o unique_id.so
+uid.dll : uid.c
+#	i686-pc-mingw32-gcc  -I/usr/include uid.c -shared -ouid.dll
+	i686-w64-mingw32-gcc -I/usr/include uid.c -shared -ouid.dll
+
+uid.so : uid.c
+	gcc -g -fPIC -I/usr/local/include -shared uid.c -o uid.so
 
 clean :
-	rm -fr *.so
+	rm -fr uid.so uid.dll
+
