@@ -5,6 +5,7 @@ SQLITE_EXTENSION_INIT1
 /* Insert your extension code here */
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #ifdef _WIN32
 __declspec(dllexport)
@@ -12,6 +13,7 @@ __declspec(dllexport)
 
 void sqlite_ext_uid(sqlite3_context*,int,sqlite3_value**);
 void sqlite_ext_uid_destroy(void*);
+void sqlite_ext_uid_randomizer(const char* chars, int length, char* buffer);
 
 /* TODO: Change the entry point name so that "extension" is replaced by
 ** text derived from the shared library filename as follows:  Copy every
@@ -36,14 +38,33 @@ int sqlite3_uid_init(sqlite3 *db, char **pzErrMsg, const sqlite3_api_routines *p
   return rc;
 }
 
+void sqlite_ext_uid_randomizer(const char* chars, int length, char* buffer) {
+
+  int i = 0;
+  int max = strlen(chars);
+  long rndm;
+  time_t time_seed;
+  int last = 0;
+
+  time(&time_seed);
+  srand(time_seed);
+
+  for ( i=0; i < length; i++ ) {
+    do {
+      rndm = rand() % max;
+    } while ( rndm == last );
+    last = rndm;
+    buffer[i] = chars[rndm % max];
+  }
+  buffer[i] = 0;
+
+}
+
 void sqlite_ext_uid(sqlite3_context *db, int row, sqlite3_value **value) {
 
   char *uid = malloc(256);
-  char *chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-  int i = 0;
-  int max = strlen(chars);
+  char *chars = "0123456789abcdefghijklmnopqrstuvwxyz";
   int max_length = 8;
-  long rndm;
 
   if ( uid == NULL ) {
     sqlite3_result_error_nomem(db);
@@ -54,16 +75,13 @@ void sqlite_ext_uid(sqlite3_context *db, int row, sqlite3_value **value) {
     int type = sqlite3_value_numeric_type(value[0]);
     if ( type == SQLITE_INTEGER ) {
       max_length = sqlite3_value_int(value[0]);
+      if ( max_length > 256 ) {
+	sqlite3_result_error_nomem(db);
+      }
     }
   }
 
-  for ( i=0; i < 254 && i < max_length; i++ ) {
-    rndm = rand();
-    uid[i] = chars[rndm % max];
-  }
-  uid[i] = 0;
-
-  //  strcpy(uid, sqlite3_value_text(value[0]));
+  sqlite_ext_uid_randomizer(chars, max_length, uid);
 
   sqlite3_result_text(db, uid, strlen(uid), sqlite_ext_uid_destroy);
 
