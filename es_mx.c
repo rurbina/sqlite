@@ -85,18 +85,14 @@ int sqlite3_es_mx_xcompare(void *requested_collation, int lenA, const void *ptrA
     printf("Locale setting failed\n");
     return 0;
   }
-  else {
-    printf("Locale is %s\n", set_locale);
-  }
 
   // the resulting strings should compare nicely
   strxfrm(xA, strA, lenA*4);
   strxfrm(xB, strB, lenB*4);
   diff = strcmp(xA,xB);
 
+  // reset locale
   setlocale(LC_COLLATE, saved_locale);
-
-  printf("CMP: %s %s %s\n", xA, ( (diff==0)?"==":(diff<0)?"<":">"  ), xB);
 
   return diff; //sqlite3_stricmp(strA,strB);
 
