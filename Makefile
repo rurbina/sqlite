@@ -1,11 +1,17 @@
-dll : uid.dll es_mx.dll
-so  : uid.so  es_mx.so
+dll : uid.dll es_mx.dll strmatch.dll
+so  : uid.so  es_mx.so strmatch.so
 
 uid.dll : uid.c
 	gcc -g uid.c -shared -ouid.dll
 
 uid.so : uid.c
 	gcc -g -fPIC -I/usr/local/include -shared uid.c -o uid.so
+
+strmatch.dll : strmatch.c
+	gcc -g strmatch.c -shared -ostrmatch.dll
+
+strmatch.so : strmatch.c
+	gcc -g -fPIC -I/usr/local/include -shared strmatch.c -o strmatch.so
 
 es_mx.so : es_mx.c
 	gcc -g -fPIC -I/usr/local/include -shared es_mx.c -o es_mx.so
