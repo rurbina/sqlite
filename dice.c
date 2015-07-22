@@ -66,7 +66,7 @@ int parse_dice(char *dice, int *qty, int *sides, int *plus) {
   }
 
   return ( *qty > 0 && sides > 0 );
-
+  
 }
 
 int roll_dice(int qty, int sides, int plus) {
@@ -78,7 +78,7 @@ int roll_dice(int qty, int sides, int plus) {
   }
 
   return total;
-
+  
 }
 
 void sqlite_ext_roll(sqlite3_context *db, int row, sqlite3_value **value) {
@@ -89,8 +89,8 @@ void sqlite_ext_roll(sqlite3_context *db, int row, sqlite3_value **value) {
     parse = parse_dice((char *)sqlite3_value_text(value[0]), &qty, &sides, &plus);
   }
   else {
-    qty   = sqlite3_value_int(value[0]);
-    sides = sqlite3_value_int(value[1]);
+    qty   = sqlite3_value_int(value[0]);			 
+    sides = sqlite3_value_int(value[1]);			 
     plus  = value[2] == NULL ? 0 : sqlite3_value_int(value[2]);
   }
 
@@ -98,7 +98,7 @@ void sqlite_ext_roll(sqlite3_context *db, int row, sqlite3_value **value) {
     sqlite3_result_int(db, 0);
   else
     sqlite3_result_int(db, roll_dice(qty, sides, plus) );
-
+  
 }
 
 double dice_avg(int qty, int sides, int plus) {
@@ -106,7 +106,7 @@ double dice_avg(int qty, int sides, int plus) {
   double total = plus + ( ( (sides / 2) + .5 ) * qty );
 
   return total;
-
+  
 }
 
 void sqlite_ext_dice_avg(sqlite3_context *db, int row, sqlite3_value **value) {
@@ -117,14 +117,15 @@ void sqlite_ext_dice_avg(sqlite3_context *db, int row, sqlite3_value **value) {
     parse = parse_dice((char *)sqlite3_value_text(value[0]), &qty, &sides, &plus);
   }
   else {
-    qty   = sqlite3_value_int(value[0]);
-    sides = sqlite3_value_int(value[1]);
+    qty   = sqlite3_value_int(value[0]);			 
+    sides = sqlite3_value_int(value[1]);			 
     plus  = value[2] == NULL ? 0 : sqlite3_value_int(value[2]);
   }
 
   if ( qty < 1 || sides < 1 )
     sqlite3_result_int(db, 0);
-  else
+  else    
     sqlite3_result_double(db, dice_avg(qty, sides, plus) );
-
+  
 }
+
