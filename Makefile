@@ -1,5 +1,5 @@
-dll : uid.dll es_mx.dll strmatch.dll
-so  : uid.so  es_mx.so strmatch.so
+dll : uid.dll es_mx.dll strmatch.dll dice.dll
+so  : uid.so  es_mx.so strmatch.so dice.so
 
 uid.dll : uid.c
 	gcc -g uid.c -shared -ouid.dll
