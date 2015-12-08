@@ -21,7 +21,7 @@ void sqlite_ext_uid_randomizer(const char* chars, int length, char* buffer);
 ** the next following ".", converting each character to lowercase, and
 ** discarding the first three characters if they are "lib".
 */
-int sqlite3_uid_init(sqlite3 *db, char **pzErrMsg, const sqlite3_api_routines *pApi )
+int sqlite3_extension_init(sqlite3 *db, char **pzErrMsg, const sqlite3_api_routines *pApi )
 {
   int rc = SQLITE_OK;
   SQLITE_EXTENSION_INIT2(pApi);

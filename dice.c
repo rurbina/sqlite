@@ -23,7 +23,7 @@ void sqlite_ext_dice_avg(sqlite3_context*,int,sqlite3_value**);
 ** the next following ".", converting each character to lowercase, and
 ** discarding the first three characters if they are "lib".
 */
-int sqlite3_dice_init(sqlite3 *db, char **pzErrMsg, const sqlite3_api_routines *pApi )
+int sqlite3_extension_init(sqlite3 *db, char **pzErrMsg, const sqlite3_api_routines *pApi )
 {
   int rc = SQLITE_OK;
   SQLITE_EXTENSION_INIT2(pApi);
